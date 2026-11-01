@@ -1,0 +1,250 @@
+{
+  "_meta": {
+    "description": "Point-in-time data snapshot for Infosys Ltd (NSE: INFY) so the model runs fully offline. Run with --live to refresh market data via yfinance.",
+    "snapshot_date": "2026-10-28",
+    "units_usd": "USD millions (as reported under IFRS, standardized by S&P Global Market Intelligence)",
+    "units_inr": "INR crore (1 crore = 10 million)",
+    "sources": {
+      "financials_usd": "stockanalysis.com/stocks/infy/financials (income statement, balance sheet, cash flow), data by S&P Global Market Intelligence, last updated 23-Jul-2026",
+      "revenue_inr": "Infosys IFRS INR press releases (Form 6-K, SEC EDGAR CIK 0001067491). FY26 = 178,650 cr",
+      "q2_fy27": "Infosys Q2 FY27 results, 23-Oct-2026: revenue 49,244 cr, net profit 7,823 cr, FY27 CC guidance 1-2%, margin guidance 20-22%",
+      "price": "NSE close 27-Oct-2026: 1,163.00; market cap 4,73,196.87 cr (5paisa / Bajaj Broking quote pages)",
+      "risk_free": "10Y G-Sec benchmark (6.94% GS 2036) closed at 7.40% on 14-Oct-2026 (ICRA Analytics via Aditya Birla Sun Life daily fixed income tracker, 15-Oct-2026)",
+      "aaa_10y": "10Y AAA corporate bond yield 8.04% on 14-Oct-2026 (same source)",
+      "cash_q2_fy27": "Infosys Q2 FY27 fact sheet: consolidated cash and investments Rs 45,232 cr at 30-Sep-2026",
+      "dividend": "Interim dividend Rs 26/share, record date 3-Nov-2026, payment 11-Nov-2026: price on 27-Oct-2026 is cum-dividend and cash at 30-Sep still includes it, so no adjustment",
+      "country_risk": "Damodaran country risk dataset (updated 5-Jan-2026): India Baa3, default spread 1.87%, CRP 2.85%, mature ERP 4.23%"
+    }
+  },
+  "fiscal_years": [
+    "FY22",
+    "FY23",
+    "FY24",
+    "FY25",
+    "FY26"
+  ],
+  "revenue_inr_cr": [
+    121641,
+    146767,
+    153670,
+    162990,
+    178650
+  ],
+  "income_statement_usd": {
+    "revenue": [
+      16311,
+      18212,
+      18562,
+      19277,
+      20158
+    ],
+    "ebit": [
+      3755,
+      3826,
+      3835,
+      4089,
+      4089
+    ],
+    "net_income": [
+      2963,
+      2981,
+      3167,
+      3158,
+      3313
+    ],
+    "effective_tax_rate": [
+      0.2646,
+      0.2768,
+      0.2708,
+      0.289,
+      0.2641
+    ],
+    "diluted_shares_mn": [
+      4219,
+      4188,
+      4145,
+      4152,
+      4120
+    ]
+  },
+  "cash_flow_usd": {
+    "depreciation_amortization": [
+      466,
+      524,
+      565,
+      569,
+      552
+    ],
+    "stock_based_comp": [
+      56,
+      64,
+      79,
+      95,
+      108
+    ],
+    "operating_cash_flow": [
+      3345,
+      2853,
+      3148,
+      4351,
+      4039
+    ],
+    "capex": [
+      290,
+      319,
+      266,
+      263,
+      306
+    ],
+    "lease_payments": [
+      125,
+      151,
+      245,
+      278,
+      318
+    ],
+    "free_cash_flow": [
+      3055,
+      2534,
+      2882,
+      4088,
+      3733
+    ],
+    "dividends_paid": [
+      1703,
+      1697,
+      1777,
+      2007,
+      2133
+    ],
+    "buybacks": [
+      1503,
+      1398,
+      0,
+      0,
+      2006
+    ]
+  },
+  "balance_sheet_usd": {
+    "receivables": [
+      4610,
+      5050,
+      6097,
+      5757,
+      5783
+    ],
+    "inventory": [
+      25,
+      25,
+      43,
+      48,
+      50
+    ],
+    "prepaid_expenses": [
+      263,
+      334,
+      399,
+      360,
+      450
+    ],
+    "other_current_assets": [
+      782,
+      895,
+      862,
+      873,
+      923
+    ],
+    "accounts_payable": [
+      545,
+      470,
+      474,
+      487,
+      500
+    ],
+    "accrued_expenses": [
+      1811,
+      1749,
+      1835,
+      1908,
+      2020
+    ],
+    "income_taxes_payable": [
+      344,
+      412,
+      430,
+      567,
+      594
+    ],
+    "unearned_revenue": [
+      835,
+      872,
+      880,
+      994,
+      1248
+    ],
+    "other_current_liabilities": [
+      783,
+      1115,
+      797,
+      769,
+      821
+    ],
+    "cash_and_st_investments": [
+      3185,
+      2322,
+      3321,
+      4321,
+      3706
+    ],
+    "lt_investments": [
+      1801,
+      1530,
+      1404,
+      1294,
+      942
+    ],
+    "lease_liabilities": [
+      722,
+      1010,
+      1002,
+      962,
+      967
+    ],
+    "total_equity": [
+      9994,
+      9224,
+      10605,
+      11255,
+      9840
+    ]
+  },
+  "latest_balance_sheet": {
+    "as_of": "2026-09-30",
+    "cash_and_investments_inr_cr": 45232,
+    "cash_note": "Consolidated cash and investments at 30-Sep-2026, Infosys Q2 FY27 fact sheet",
+    "usd_mn": {
+      "lease_liabilities": 923,
+      "borrowings": 0,
+      "minority_interest": 55
+    },
+    "usd_items_as_of": "2026-06-30",
+    "fx_usdinr": 95.71,
+    "fx_note": "Q2 FY27 implied average rate: INR revenue 49,244 cr / USD revenue 5,145 mn. Applied to lease liabilities and minority interest (latest standardized values, 30-Jun-2026)."
+  },
+  "ttm_inr_cr": {
+    "as_of": "2026-09-30",
+    "revenue": 189335,
+    "revenue_note": "H2 FY26 (178,650 - 42,279 - 44,490 = 91,881) + H1 FY27 (97,454)",
+    "net_income": 30747,
+    "net_income_note": "Q3 FY26 6,654 (derived: FY26 29,440 - Q1 6,921 - Q2 7,364 - Q4 8,501) + Q4 FY26 8,501 + Q1 FY27 7,769 + Q2 FY27 7,823"
+  },
+  "market": {
+    "price": 1163.0,
+    "price_date": "2026-10-27",
+    "market_cap_cr": 473196.87,
+    "shares_diluted_cr": 406.87,
+    "shares_note": "Market cap / price on 27-Oct-2026",
+    "week52_low": 980.4,
+    "week52_high": 1728.0
+  }
+}

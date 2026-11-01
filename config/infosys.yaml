@@ -1,0 +1,132 @@
+# =====================================================================
+#  Infosys Ltd (NSE: INFY) - DCF valuation assumptions
+#  All money in INR crore unless stated. Rates stored as decimals.
+#  Every number here is a lever: change it, re-run, and the Python
+#  engine, the Excel workbook and every chart update together.
+# =====================================================================
+
+company:
+  name: Infosys Limited
+  ticker: INFY.NS          # yfinance ticker (used with --live)
+  index_ticker: ^NSEI      # NIFTY 50, used for the beta regression (--live)
+  currency: INR
+  units: "INR crore"
+  fiscal_year_end: "03-31"
+
+valuation_date: 2026-10-28
+snapshot: data/infosys_snapshot.json
+
+# ---------------------------------------------------------------------
+#  Cost of capital (CAPM with a lambda-weighted country risk premium)
+#  Rf (INR)       = 10Y G-Sec yield - India sovereign default spread
+#  Cost of equity = Rf + beta x Mature ERP + lambda x CRP
+#  The G-Sec yield already prices India's default risk, so it is stripped out before
+#  country risk is added back through the CRP (Damodaran's local-currency approach).
+#  Set india_default_spread to 0 to use the raw G-Sec yield instead (more conservative).
+# ---------------------------------------------------------------------
+wacc:
+  gsec_10y: 0.0740             # 10Y G-Sec benchmark, 14-Oct-2026 (see snapshot sources)
+  india_default_spread: 0.0187 # Damodaran, Jan 2026: Moody's Baa3 rating-based default spread
+  mature_market_erp: 0.0423    # Damodaran, Jan 2026
+  country_risk_premium: 0.0285 # Damodaran, Jan 2026: India CRP
+  lambda: 0.50                 # Exposure to India country risk. ~97% of revenue is exported,
+                               # but delivery centres and cost base sit in India -> partial exposure.
+  beta:
+    raw: 0.85                  # Assumption: mid-point of published 1y-5y betas vs NIFTY (0.66-1.0).
+                               # --live replaces this with a 2y weekly regression vs NIFTY 50.
+    blume_adjust: true         # Adjusted = 0.67 x raw + 0.33 x 1.0
+  pre_tax_cost_of_debt: 0.0804 # 10Y AAA corporate yield, 14-Oct-2026 (lease discount-rate proxy)
+  marginal_tax_rate: 0.265
+
+# ---------------------------------------------------------------------
+#  Operating forecast: FY27E - FY36E (10 years), base year FY26A
+# ---------------------------------------------------------------------
+forecast:
+  years: 10
+  # INR revenue growth. FY27E: H1 FY27 grew 12.3% YoY in INR (rupee at ~95/USD vs ~88 a
+  # year ago) while CC guidance is just 1-2%; H2 assumed +8% INR -> ~10% for the year.
+  # Long run = ~4-5% CC growth + ~2.5-3% structural INR depreciation, fading to terminal.
+  revenue_growth: [0.100, 0.070, 0.075, 0.080, 0.080, 0.075, 0.070, 0.065, 0.060, 0.055]
+  ebit_margin_start: 0.210     # FY27 guidance 20-22%; H1 FY27 actual 21.0%
+  ebit_margin_end: 0.205       # mild pricing pressure from AI-led deflation in managed services
+  tax_rate: 0.265              # FY26 effective 26.4%; 5y avg 27.4%
+  da_pct_revenue: 0.027        # incl. right-of-use (IFRS 16) depreciation; FY26 2.7%
+  capex_pct_revenue: 0.015     # PP&E capex; FY22-26 average 1.6%
+  rou_additions_pct_revenue: 0.016  # new leased assets (IFRS 16) ~ lease payments, FY26 1.6%
+  nwc_pct_revenue: 0.105       # operating NWC / revenue; FY22-26 average 11.2%, FY26 10.0%
+
+# ---------------------------------------------------------------------
+#  Terminal value: three methods, cross-checked against each other
+# ---------------------------------------------------------------------
+terminal:
+  growth: 0.050                # nominal INR; below 10Y G-Sec and India nominal GDP
+  exit_ev_ebitda: 11.0         # Set to match the value-driver TV (~11.1x terminal EBITDA), and below
+                               # today's peer median (~11.4x), since the FY36 business grows more slowly.
+  ronic: 0.40                  # Return on new invested capital in steady state. FY26 ROIC ~49%
+                               # (NOPAT 26,668 cr / invested capital 54,584 cr); assume it fades to 40%.
+
+headline_weights:              # how the headline intrinsic value blends methods
+  perpetuity: 0.0              # Gordon on FCFF is shown as a check only: its terminal-year FCFF
+                               # implies ~80% return on new capital, which is too generous
+  value_driver: 0.5            # reinvestment tied to growth via RONIC
+  exit_multiple: 0.5
+
+# ---------------------------------------------------------------------
+#  Scenarios: additive shifts applied on top of the base forecast
+# ---------------------------------------------------------------------
+scenarios:
+  bear:
+    label: "Bear - AI deflation bites"
+    growth_shift: -0.025       # every forecast year
+    margin_shift: -0.015
+    wacc_shift: 0.0075
+    terminal_growth: 0.040
+    exit_ev_ebitda: 9.0
+  base:
+    label: "Base - guidance-anchored"
+    growth_shift: 0.0
+    margin_shift: 0.0
+    wacc_shift: 0.0
+    terminal_growth: 0.050
+    exit_ev_ebitda: 11.0
+  bull:
+    label: "Bull - AI services re-accelerate"
+    growth_shift: 0.020
+    margin_shift: 0.010
+    wacc_shift: -0.0050
+    terminal_growth: 0.055
+    exit_ev_ebitda: 13.5
+
+# ---------------------------------------------------------------------
+#  Monte Carlo: correlated draws across the key value drivers
+# ---------------------------------------------------------------------
+monte_carlo:
+  simulations: 10000
+  seed: 42
+  growth_shift_sd: 0.015       # normal, mean 0, added to every forecast year
+  margin_shift_sd: 0.012       # normal, mean 0
+  wacc_sd: 0.0075              # normal around base WACC
+  terminal_growth: {low: 0.040, mode: 0.050, high: 0.060}   # triangular
+  exit_multiple_sd: 2.0        # normal around base exit multiple
+  min_spread_wacc_minus_g: 0.020   # draws closer than this are clipped
+  correlation:                 # Gaussian copula, applied via Cholesky
+    growth_margin: 0.50        # operating leverage: faster growth tends to come with better margins
+    wacc_terminal_growth: 0.30 # higher nominal rates usually travel with higher nominal growth
+    growth_exit_multiple: 0.40 # market pays up for growth
+
+# ---------------------------------------------------------------------
+#  Trading comparables (Indian Tier-1 IT services)
+#  Snapshot multiples; --live refreshes P/E and EV/EBITDA from yfinance.
+# ---------------------------------------------------------------------
+comps:
+  peers:
+    - {name: "TCS",           ticker: TCS.NS,     pe_ttm: 15.4, ev_ebitda_ttm: 11.4}
+    - {name: "HCLTech",       ticker: HCLTECH.NS, pe_ttm: 19.1, ev_ebitda_ttm: 10.3}
+    - {name: "Wipro",         ticker: WIPRO.NS,   pe_ttm: 12.7, ev_ebitda_ttm: null}
+    - {name: "Tech Mahindra", ticker: TECHM.NS,   pe_ttm: 28.1, ev_ebitda_ttm: null}
+    - {name: "LTM (LTIMindtree)", ticker: LTM.NS, pe_ttm: 22.8, ev_ebitda_ttm: 12.3}
+  sources: >-
+    P/E: Tapetide IT sector table, 13-Oct-2026. EV/EBITDA: TCS 11.37x (KoalaGains, 19-Oct-2026);
+    HCLTech and LTM computed from PitchBook TTM Sep-2026 EV / EBITDA (USD). Wipro and Tech Mahindra
+    EV/EBITDA not available from a consistent source in the snapshot (refresh with --live).
+  infosys_ttm_ebitda_margin: 0.237  # estimate: EBIT margin 21.0% + D&A 2.7% (IFRS 16 basis)
